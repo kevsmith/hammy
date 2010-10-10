@@ -102,7 +102,7 @@ timing_test() ->
     insert(R, V, 10000),
     End = erlang:now(),
     hammy_nifs:close(R),
-    ?debugFmt("10000 inserts took ~p~n", [erlang:round(timer:now_diff(End, Start) / 1000)]),
+    ?debugFmt("Write 10000 1K objects in ~pms~n", [erlang:round(timer:now_diff(End, Start) / 1000)]),
     os:cmd("rm -f /tmp/*" ++ DB ++ "*"),
     ok.
 
