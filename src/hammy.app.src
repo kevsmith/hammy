@@ -1,0 +1,12 @@
+{application, hammy,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { hammy_app, []}},
+  {env, []}
+ ]}.
