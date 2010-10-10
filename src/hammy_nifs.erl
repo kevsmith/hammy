@@ -96,22 +96,22 @@ rwd_test() ->
 
 timing_test() ->
     DB = unique_name(),
-    {ok, R} = hammy_nifs:open(list_to_binary(["/Volumes/Data/tmp/", DB])),
+    {ok, R} = hammy_nifs:open(list_to_binary(["/tmp/", DB])),
+    V = generate_value(1024),
     Start = erlang:now(),
-    insert(R, 10000),
+    insert(R, V, 10000),
     End = erlang:now(),
     hammy_nifs:close(R),
     ?debugFmt("10000 inserts took ~p~n", [erlang:round(timer:now_diff(End, Start) / 1000)]),
-    os:cmd("rm -f /Volumes/Data/tmp/*" ++ DB ++ "*"),
+    os:cmd("rm -f /tmp/*" ++ DB ++ "*"),
     ok.
 
-insert(_R, 0) ->
+insert(_R, _V, 0) ->
     ok;
-insert(R, Count) ->
+insert(R, V, Count) ->
     Key = unique_val(),
-    Val = unique_val(),
-    hammy_nifs:put(R, Key, Val),
-    insert(R, Count - 1).
+    hammy_nifs:put(R, Key, V),
+    insert(R, V, Count - 1).
 
 unique_name() ->
     {_, _, T3} = erlang:now(),
@@ -120,5 +120,14 @@ unique_name() ->
 unique_val() ->
     {_, _, T3} = erlang:now(),
     list_to_binary(integer_to_list(T3)).
+
+generate_value(Size) ->
+    generate_value(Size, []).
+
+generate_value(0, Accum) ->
+    list_to_binary(Accum);
+generate_value(Size, Accum) ->
+    C = random:uniform(26) + 95,
+    generate_value(Size - 1, [C|Accum]).
 
 -endif.
