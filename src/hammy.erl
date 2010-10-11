@@ -25,8 +25,13 @@
 %%            a later release.
 -module(hammy).
 
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+-endif.
+
 -export([open/1,
          create/1,
+         open_or_create/1,
          close/1,
          put/3,
          get/2,
@@ -47,6 +52,25 @@ create(FileName) when is_list(FileName) ->
     hammy_nifs:create(list_to_binary(FileName));
 create(FileName) when is_binary(FileName) ->
     hammy_nifs:create(FileName).
+
+%% @spec open_or_create(list() | binary()) -> {ok, ref()} | {error, open_db}
+%% @doc Creates or opens an existing database, as needed. If the filename
+%%      exists then it assumed to be a valid database file. If the file
+%%      doesn't exist then a new database is created.
+open_or_create(FileName) when is_binary(FileName) ->
+    open_or_create(binary_to_list(FileName));
+open_or_create(FileName) when is_list(FileName) ->
+    case filelib:is_dir(FileName) of
+        true ->
+            erlang:error(badarg);
+        false ->
+            case filelib:is_file(FileName) of
+                true ->
+                    open(FileName);
+                false ->
+                    create(FileName)
+            end
+    end.
 
 %% @spec close(ref()) -> ok
 %% @doc Closes the database. Aborts any pending writes.
@@ -69,3 +93,16 @@ get(DB, Key) when is_binary(Key) ->
 %% @doc Deletes an entry from the database.
 del(DB, Key) when is_binary(Key) ->
     hammy_nifs:del(DB, Key).
+
+-ifdef(TEST).
+conditional_create_test() ->
+    os:cmd("rm -f /tmp/*foo.db*"),
+    {ok, R} = open_or_create("/tmp/foo.db"),
+    ok = hammy:put(R, <<"testing">>, <<"123">>),
+    ok = hammy:close(R),
+    {ok, R1} = open_or_create("/tmp/foo.db"),
+    {ok, <<"123">>} = hammy:get(R1, <<"testing">>),
+    ok = hammy:close(R1),
+    os:cmd("rm -f /tmp/*foo.db*"),
+    ok.
+-endif.
