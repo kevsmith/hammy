@@ -43,6 +43,7 @@ static int hammy_on_load(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_inf
 
 // NIF functions
 ERL_NIF_TERM hammy_nifs_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+ERL_NIF_TERM hammy_nifs_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM hammy_nifs_close(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM hammy_nifs_put(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 ERL_NIF_TERM hammy_nifs_get(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
@@ -51,6 +52,7 @@ ERL_NIF_TERM hammy_nifs_del(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 static ErlNifFunc hammy_nif_funcs[] =
 {
     {"open", 1, hammy_nifs_open},
+    {"create", 1, hammy_nifs_create},
     {"close", 1, hammy_nifs_close},
     {"put", 3, hammy_nifs_put},
     {"get", 2, hammy_nifs_get},
@@ -77,7 +79,39 @@ ERL_NIF_TERM hammy_nifs_open(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]
         retval = OOM_ERROR;
     }
     else {
-        if (hammy_open(env, filename, db)) {
+        if (hammy_open(env, filename, db, HAMMY_FALSE)) {
+            ERL_NIF_TERM result = enif_make_resource(env, db);
+            enif_release_resource_compat(env, db);
+            retval = enif_make_tuple2(env, ATOM_OK, result);
+        }
+        else {
+            enif_release_resource_compat(env, db);
+            enif_free_compat(env, filename);
+            retval = enif_make_tuple2(env, ATOM_ERROR, ATOM_OPEN_DB);
+        }
+    }
+    return retval;
+}
+
+ERL_NIF_TERM hammy_nifs_create(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
+    char *filename;
+    hammy_db *db;
+    ERL_NIF_TERM retval;
+    if (argc != 1 || (filename = hammy_extract_string(env, argv[0])) == NULL) {
+        return enif_make_badarg(env);
+    }
+
+    db = enif_alloc_resource_compat(env, hammy_db_RESOURCE,
+                                    sizeof(hammy_db));
+
+    /* Whoops, couldn't allocate resource handle */
+    if (db == NULL) {
+        enif_release_resource_compat(env, db);
+        enif_free_compat(env, filename);
+        retval = OOM_ERROR;
+    }
+    else {
+        if (hammy_open(env, filename, db, HAMMY_TRUE)) {
             ERL_NIF_TERM result = enif_make_resource(env, db);
             enif_release_resource_compat(env, db);
             retval = enif_make_tuple2(env, ATOM_OK, result);

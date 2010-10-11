@@ -37,7 +37,7 @@ typedef struct _hammy_db_t {
     int closed;
 } hammy_db;
 
-int hammy_open(ErlNifEnv *env, char *filename, hammy_db *db);
+int hammy_open(ErlNifEnv *env, char *filename, hammy_db *db, int create);
 int hammy_close(hammy_db *db);
 
 int hammy_put(ErlNifEnv *env, hammy_db *db, unsigned char *key, int key_size, unsigned char *value, int value_size);

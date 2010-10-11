@@ -10,3 +10,6 @@ compile:
 
 clean:
 	./rebar clean
+
+benchmark: compile
+	@erl -noshell -pa ebin -eval 'hammy_bench:start().' -s init stop
