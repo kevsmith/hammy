@@ -1,0 +1,20 @@
+* What is hammy?
+  hammy is an opinionated Erlang wrapper around Christoph Rupp's excellent [[http://hamsterdb.com][HamsterDB]] library.
+  hammy doesn't strive to provide a 1:1 binding to all of HamsterDB's API. Instead, hammy's goal is to
+  provide a useful and fast key/value store API.
+
+* How do I build it?
+  Simply check out the sources and type 'make'. hammy requires Erlang (tested against R13B04, should run
+  on R14) and wget to build.
+
+* How fast is hammy?
+  Type 'make benchmark' to get an idea how fast hammy is on your machine. In general, you can expect
+  hammy to serve about 5000 writes/sec. Of course, a lot depends on disk speed, class of machine,
+  and the size of your data.
+
+* Where are the docs?
+  It's stll early days for hammy so docs are a little lacking. For now, refer to the hammy module for
+  the list of functions available. More docs are coming soon.
+
+* What license does hammy use?
+  hammy is licensed under the Apache2 license.
