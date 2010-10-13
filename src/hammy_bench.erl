@@ -38,8 +38,8 @@ write() ->
     V = generate_value(1024),
     Start = erlang:now(),
     {ok, Keys} = insert(R, V, 10000),
-    End = erlang:now(),
     hammy_nifs:close(R),
+    End = erlang:now(),
     io:format("Wrote 10000 1K objects in ~pms~n", [erlang:round(timer:now_diff(End, Start) / 1000)]),
     Keys.
 
@@ -47,8 +47,8 @@ read(Keys) ->
     {ok, R1} = hammy_nifs:open(?DB),
     Start1 = erlang:now(),
     read(R1, Keys),
-    End1 = erlang:now(),
     hammy_nifs:close(R1),
+    End1 = erlang:now(),
     io:format("Read 10000 1K objects in ~pms~n", [erlang:round(timer:now_diff(End1, Start1) / 1000)]).
 
 generate_value(Size) ->
