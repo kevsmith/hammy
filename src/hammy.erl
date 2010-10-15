@@ -97,7 +97,7 @@ del(DB, Key) when is_binary(Key) ->
 -ifdef(TEST).
 conditional_create_test() ->
     os:cmd("rm -f /tmp/*foo.db*"),
-    {ok, R} = open_or_create("/tmp/foo.db"),
+    {ok, R} = hammy:open_or_create("/tmp/foo.db"),
     ok = hammy:put(R, <<"testing">>, <<"123">>),
     ok = hammy:close(R),
     {ok, R1} = open_or_create("/tmp/foo.db"),
