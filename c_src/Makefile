@@ -1,13 +1,13 @@
 TAR		?= tar
 GUNZIP		?= gunzip
-HAMSTER_VER 	= 1.1.6
+HAMSTER_VER 	= 1.1.7
 
 all: dist
 
-dist: hamsterdb-1.1.6.tar.gz libhamsterdb.a
+dist: hamsterdb-$(HAMSTER_VER).tar.gz libhamsterdb.a
 	@rm -rf hamsterdb-$(HAMSTER_VER)
 
-hamsterdb-1.1.6.tar.gz:
+hamsterdb-$(HAMSTER_VER).tar.gz:
 	wget http://hamsterdb.com/public/dl/hamsterdb-1.1.6.tar.gz
 
 libhamsterdb.a:

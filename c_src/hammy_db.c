@@ -140,21 +140,17 @@ int hammy_setup_env(ErlNifEnv *env, hammy_db *db) {
     ham_size_t count = HAMMY_MAX_DB;
     ham_u16_t *names = (ham_u16_t *) enif_alloc_compat(env, sizeof(ham_u16_t) * HAMMY_MAX_DB);
     ham_new(&(db->databases[0]));
-    ham_new(&(db->databases[1]));
     if ( ham_env_get_database_names(db->env, names, &count) == HAM_SUCCESS) {
-        /* New env, so let's setup data database and meta database */
+        /* New env, so let's setup data database */
         if (count == 0) {
             /* Database 1 is data */
             ham_env_create_db(db->env, db->databases[0], 1, HAM_USE_BTREE, HAMMY_DB_OPTS);
-            /* Database 2 is metadata */
-            ham_env_create_db(db->env, db->databases[1], 2, HAM_USE_BTREE, HAMMY_DB_OPTS);
             db->db_count = 2;
         }
         else {
             ham_env_open_db(db->env, db->databases[0], 1, 0, EMPTY_OPTS);
-            ham_env_open_db(db->env, db->databases[1], 2, 0, EMPTY_OPTS);
             /* TODO: Load existing user-defined indices */
-            db->db_count = 2;
+            db->db_count = 1;
         }
     }
     else {

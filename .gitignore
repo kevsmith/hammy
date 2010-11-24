@@ -2,6 +2,8 @@ ebin/*
 priv/*.so
 c_src/*.o
 c_src/include/*
-c_src/hamsterdb-1.1.6.tar.gz
+c_src/hamsterdb-*.tar.gz
 c_src/libhamsterdb.a
 .eunit/*
+.DS_Store
+erl_crash.dump
