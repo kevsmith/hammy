@@ -145,7 +145,7 @@ int hammy_setup_env(ErlNifEnv *env, hammy_db *db) {
         if (count == 0) {
             /* Database 1 is data */
             ham_env_create_db(db->env, db->databases[0], 1, HAM_USE_BTREE, HAMMY_DB_OPTS);
-            db->db_count = 2;
+            db->db_count = 1;
         }
         else {
             ham_env_open_db(db->env, db->databases[0], 1, 0, EMPTY_OPTS);
