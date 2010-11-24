@@ -22,6 +22,7 @@
 -module(hammy_bench).
 
 -define(DB, <<"/tmp/benchmark.db">>).
+-define(BATCH_SIZE, 1000000).
 
 -export([start/0,
          write/0,
@@ -37,10 +38,10 @@ write() ->
     {ok, R} = hammy_nifs:create(?DB),
     V = generate_value(1024),
     Start = erlang:now(),
-    {ok, Keys} = insert(R, V, 10000),
+    {ok, Keys} = insert(R, V, ?BATCH_SIZE),
     hammy_nifs:close(R),
     End = erlang:now(),
-    io:format("Wrote 10000 1K objects in ~pms~n", [erlang:round(timer:now_diff(End, Start) / 1000)]),
+    io:format("Wrote ~p 1K objects in ~pms~n", [?BATCH_SIZE, erlang:round(timer:now_diff(End, Start) / 1000)]),
     Keys.
 
 read(Keys) ->
@@ -49,7 +50,7 @@ read(Keys) ->
     read(R1, Keys),
     hammy_nifs:close(R1),
     End1 = erlang:now(),
-    io:format("Read 10000 1K objects in ~pms~n", [erlang:round(timer:now_diff(End1, Start1) / 1000)]).
+    io:format("Read ~p 1K objects in ~pms~n", [?BATCH_SIZE, erlang:round(timer:now_diff(End1, Start1) / 1000)]).
 
 generate_value(Size) ->
     generate_value(Size, []).
