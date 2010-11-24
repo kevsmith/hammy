@@ -22,7 +22,7 @@
 -module(hammy_bench).
 
 -define(DB, <<"/tmp/benchmark.db">>).
--define(BATCH_SIZE, 1000000).
+-define(BATCH_SIZE, 100000).
 
 -export([start/0,
          write/0,
@@ -30,7 +30,7 @@
 
 start() ->
     Keys = write(),
-    read(Keys),
+    read(mix(Keys)),
     os:cmd("rm -f /tmp/*benchmark.db*"),
     ok.
 
@@ -80,3 +80,9 @@ insert(R, V, Count, Accum) ->
 unique_val() ->
     {_, _, T3} = erlang:now(),
     list_to_binary(integer_to_list(T3)).
+
+mix(Keys) ->
+    {T1, T2, T3} = erlang:now(),
+    random:seed(T1, T2, T3),
+    F = fun(_, _) -> random:uniform() >= 0.5 end,
+    lists:sort(F, Keys).
